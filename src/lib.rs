@@ -27,6 +27,7 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
         }    
     } else {
         let mut row = Vec::new();
+        let mut str = "";
         for y in 0..height {
             //TODO: inc by 2 instead
             if y%2 == 1 || y + 1 == height {
@@ -36,20 +37,19 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
             for x in 0..width {
                 let top = img[(x,y)];
                 let bottom = img[(x,y+1)];
-                if bottom[3] > 0 {
-                    if top[3] > 0 {
-                        write!(row, "\x1b[48;2;{};{};{}m",
-                               top[0], top[1], top[2]).unwrap();
-                    }
+                
+                if bottom[3] == 0 && top[3] == 0 {
+                    write!(row, " ").unwrap();
+                } else if bottom[3] == 0 && top[3] > 0 {
+                    write!(row, "\x1b[38;2;{};{};{}m▀",
+                                top[0], top[1], top[2]).unwrap();
+                } else if bottom[3] > 0 && top[3] == 0 {
                     write!(row, "\x1b[38;2;{};{};{}m▄",
-                           bottom[0], bottom[1], bottom[2]).unwrap();
-                } else {
-                    if top[3] > 0 {
-                        write!(row, "\x1b[38;2;{};{};{}m▀",
-                               top[0], top[1], top[2]).unwrap();
-                    } else {
-                        write!(row, " ").unwrap();
-                    }
+                                bottom[0], bottom[1], bottom[2]).unwrap();
+                } else if bottom[3] > 0 && top[3] > 0 {
+                    write!(row, "\x1b[48;2;{};{};{}m\x1b[38;2;{};{};{}m▄",
+                                top[0], top[1], top[2],
+                                bottom[0], bottom[1], bottom[2]).unwrap();
                 }
                 write!(row, "\x1b[0m").unwrap();
             }
