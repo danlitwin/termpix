@@ -3,6 +3,7 @@ extern crate image;
 
 use std::io::{Write, self};
 
+use ansi_term::Style;
 use ansi_term::Colour::Fixed;
 use ansi_term::ANSIStrings;
 use image::{imageops, FilterType, Pixel};
@@ -18,9 +19,22 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
             }
 
             let row: Vec<_> = (0..width).map(|x| {
-                let top_colour = find_colour_index(img[(x, y)].to_rgb().channels());
-                let bottom_colour = find_colour_index(img[(x, y + 1)].to_rgb().channels());
-                Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
+                let top = img[(x,y)];
+                let bottom = img[(x,y+1)];
+                let top_colour = find_colour_index(top.to_rgb().channels());
+                let bottom_colour = find_colour_index(bottom.to_rgb().channels());
+                
+                // Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
+                if bottom[3] == 0 && top[3] == 0 {
+                    Style::default().paint(" ")
+                } else if bottom[3] == 0 && top[3] > 0 {
+                    Fixed(top_colour)).paint("▀")
+                } else if bottom[3] > 0 && top[3] == 0 {
+                    Fixed(bottom_colour)).paint("▄")
+                } else if bottom[3] > 0 && top[3] > 0 {
+                    Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
+                }
+                
             }).collect();
 
             print!("{}\n", ANSIStrings(&row));
