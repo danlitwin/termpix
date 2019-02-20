@@ -26,13 +26,14 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
                 
                 // Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
                 if bottom[3] == 0 && top[3] == 0 {
-                    Style::default().paint(" ")
+                    Style::default().paint(" ");
                 } else if bottom[3] == 0 && top[3] > 0 {
-                    Fixed(top_colour).paint("▀")
+                    Fixed(top_colour).paint("▀");
                 } else if bottom[3] > 0 && top[3] == 0 {
-                    Fixed(bottom_colour).paint("▄")
+                    Fixed(bottom_colour).paint("▄");
                 } else if bottom[3] > 0 && top[3] > 0 {
-                    Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
+                    Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄");
+                } else {
                 }
                 
             }).collect();
