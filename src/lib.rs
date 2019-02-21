@@ -5,13 +5,14 @@ use std::io::{Write, self};
 
 use ansi_term::Style;
 use ansi_term::Colour::Fixed;
+use ansi_term::Colour::RGB;
 use ansi_term::ANSIStrings;
 use image::{imageops, FilterType, Pixel};
 
 pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, height: u32) {
-    let img = imageops::resize(&img, width, height, FilterType::Nearest);
+    // let img = imageops::resize(&img, width, height, FilterType::Nearest);
 
-    if !true_colour {
+    //if !true_colour {
         for y in 0..height {
             //TODO: inc by 2 instead
             if y%2 == 1 || y + 1 == height {
@@ -28,17 +29,29 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
                 if bottom[3] == 0 && top[3] == 0 {
                     Style::default().paint(" ")
                 } else if bottom[3] == 0 && top[3] > 0 {
-                    Fixed(top_colour).paint("▀")
+                    if !true_colour {
+                        Fixed(top_colour).paint("▀")
+                    } else {
+                        RGB(top[0], top[1], top[2]).paint("▀")
+                    }
                 } else if bottom[3] > 0 && top[3] == 0 {
-                    Fixed(bottom_colour).paint("▄")
+                    if !true_colour {
+                        Fixed(bottom_colour).paint("▄")
+                    } else {
+                        RGB(bottom[0], bottom[1], bottom[2]).paint("▄")
+                    }
                 } else { // if bottom[3] > 0 && top[3] > 0 {
-                    Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
+                    if !true_colour {
+                        Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
+                    } else {
+                        RGB(bottom[0], bottom[1], bottom[2]).on(RGB(top[0], top[1], top[2])).paint("▄")
+                    }
                 }
             }).collect();
 
             print!("{}\n", ANSIStrings(&row));
         }    
-    } else {
+    /* } else {
         let mut row = Vec::new();
         let mut str = "";
         for y in 0..height {
@@ -59,7 +72,7 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
                 } else if bottom[3] > 0 && top[3] == 0 {
                     write!(row, "\x1b[38;2;{};{};{}m▄",
                                 bottom[0], bottom[1], bottom[2]).unwrap();
-                } else if bottom[3] > 0 && top[3] > 0 {
+                } else { // if bottom[3] > 0 && top[3] > 0 {
                     write!(row, "\x1b[48;2;{};{};{}m\x1b[38;2;{};{};{}m▄",
                                 top[0], top[1], top[2],
                                 bottom[0], bottom[1], bottom[2]).unwrap();
@@ -71,7 +84,7 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
             io::stdout().write(&row).unwrap();
             row.clear();
         }
-    }
+    } */
 }
 
 fn find_colour_index(pixel: &[u8]) -> u8 {
