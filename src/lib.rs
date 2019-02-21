@@ -31,9 +31,9 @@ pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, heig
                     Fixed(top_colour).paint("▀")
                 } else if bottom[3] > 0 && top[3] == 0 {
                     Fixed(bottom_colour).paint("▄")
-                } else if bottom[3] > 0 && top[3] > 0 {
+                } else { // if bottom[3] > 0 && top[3] > 0 {
                     Fixed(bottom_colour).on(Fixed(top_colour)).paint("▄")
-                }                
+                }
             }).collect();
 
             print!("{}\n", ANSIStrings(&row));
