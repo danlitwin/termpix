@@ -54,9 +54,10 @@ fn main() {
     let img = image::open(&Path::new(&args.arg_file)).unwrap();
     let (orig_width, orig_height) = img.dimensions();
     let true_colour = args.flag_true_colour || args.flag_true_color;
+    let fit_screen = args.flag_fit_screen;
     let (width, height) = determine_size(args, orig_width, orig_height);
 
-    termpix::print_image(img, true_colour, width, height);
+    termpix::print_image(img, true_colour, width, height, fit_screen);
 
 }
 
