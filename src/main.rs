@@ -28,6 +28,7 @@ const USAGE: &'static str = "
       --height <height>  Output height in terminal rows.
       --max-width <max-width>  Maximum width to use when --width is excluded
       --max-height <max-height>  Maximum height to use when --height is excluded
+      --fit-screen              Fit image to terminal window.
       --true-colour             Use 24-bit RGB colour. Some terminals don't support this.
       --true-colour             Use 24-bit RGB color but you don't spell so good.
 ";
@@ -38,6 +39,7 @@ struct Args {
     flag_height: Option<u32>,
     flag_max_width: Option<u32>,
     flag_max_height: Option<u32>,
+    flag_fit_screen: bool,
     flag_true_colour: bool,
     flag_true_color: bool,
     arg_file: String,
@@ -66,19 +68,23 @@ fn determine_size(args: Args,
         (Some(w), None) => (w, scale_dimension(w, orig_height, orig_width)),
         (None, Some(h)) => (scale_dimension(h * 2, orig_width, orig_height), h * 2),
         (None, None) => {
-            let size = terminal_size();
-
-            if let Some((Width(terminal_width), Height(terminal_height))) = size {                            
-                fit_to_size(
-                    orig_width, 
-                    orig_height, 
-                    terminal_width as u32, 
-                    (terminal_height - 1) as u32,
-                    args.flag_max_width,
-                    args.flag_max_height)
+            if !args.flag_fit_screen {
+                (orig_width, orig_height * 2)
             } else {
-                writeln!(std::io::stderr(), "Neither --width or --height specified, and could not determine terminal size. Giving up.").unwrap();
-                std::process::exit(1);
+                let size = terminal_size();
+
+                if let Some((Width(terminal_width), Height(terminal_height))) = size {                            
+                    fit_to_size(
+                        orig_width, 
+                        orig_height, 
+                        terminal_width as u32, 
+                        (terminal_height - 1) as u32,
+                        args.flag_max_width,
+                        args.flag_max_height)
+                } else {
+                    writeln!(std::io::stderr(), "Neither --width or --height specified, and could not determine terminal size. Giving up.").unwrap();
+                    std::process::exit(1);
+                }
             }
         }
     }
