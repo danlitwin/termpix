@@ -9,8 +9,8 @@ use ansi_term::Colour::RGB;
 use ansi_term::ANSIStrings;
 use image::{imageops, FilterType, Pixel};
 
-pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, height: u32) {
-    // let img = imageops::resize(&img, width, height, FilterType::Nearest);
+pub fn print_image(img: image::DynamicImage, true_colour: bool, width: u32, height: u32, fit_screen: bool) {
+    let img = imageops::resize(&img, width, height, FilterType::Nearest);
 
     //if !true_colour {
         for y in 0..height {
