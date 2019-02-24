@@ -70,7 +70,7 @@ fn determine_size(args: Args,
         (None, Some(h)) => (scale_dimension(h * 2, orig_width, orig_height), h * 2),
         (None, None) => {
             if !args.flag_fit_screen {
-                (orig_width, orig_height * 2)
+                (orig_width, orig_height)
             } else {
                 let size = terminal_size();
 
