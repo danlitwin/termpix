@@ -18,7 +18,7 @@ const USAGE: &'static str = "
     termpix : display image from <file> in an ANSI terminal
 
     Usage:
-      termpix <file> [--width <width>] [--height <height>] [--max-width <max-width>] [--max-height <max-height>] [--true-color|--true-colour]
+      termpix <file> [--width <width>] [--height <height>] [--max-width <max-width>] [--max-height <max-height>] [--fit-screen] [--true-color|--true-colour]
 
       By default it will use as much of the current terminal window as possible, while maintaining the aspect 
       ratio of the input image. This can be overridden as follows.
